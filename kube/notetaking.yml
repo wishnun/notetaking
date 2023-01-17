@@ -1,0 +1,34 @@
+# ... Deployment YAML definition
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notetaking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notetaking
+  template:
+    metadata:
+      labels:
+        app: notetaking
+    spec:
+      containers:
+        - name: notetaking
+          image: wishnu21/notetaking
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+---
+# ... Service YAML definition
+apiVersion: v1
+kind: Service
+metadata:
+  name: notetaking
+spec:
+  selector:
+    app: notetaking
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer

@@ -1,0 +1,4 @@
+curl -X POST http://localhost:8080/notetaking/note -H "Content-Type: application/json" -d '{"description":"note1"}'
+curl -i http://localhost:8080/notetaking/note
+
+docker run -p 8080:8080 --name=notetaking -it wishnu21/notetaking
