@@ -1,14 +1,13 @@
 package com.wishnu.notetaking.service;
 
-import com.wishnu.notetaking.model.Note;
+import com.wishnu.notetaking.entity.Note;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface NoteService {
 
     List<Note> getAllNotes();
-    Note getNote(UUID id);
-    void saveNote(Note note);
+    Note getNote(String id);
+    void saveNote(String description);
     Note updateNote(Note note);
 }

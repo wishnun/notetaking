@@ -1,39 +1,53 @@
 package com.wishnu.notetaking.service;
 
-import com.wishnu.notetaking.model.Note;
+import com.wishnu.notetaking.entity.Note;
+import com.wishnu.notetaking.exception.NoteValidationException;
+import com.wishnu.notetaking.repositories.NoteRepository;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class NoteServiceImpl implements  NoteService{
 
-    // temp in memory
-    public List<Note> notes = new ArrayList<>();
+    NoteRepository noteRepository;
 
     @Override
     public List<Note> getAllNotes() {
+        List<Note> notes = noteRepository.findAll();
+        Collections.reverse(notes);
         return notes;
     }
 
     @Override
-    public Note getNote(UUID id) {
-        return notes.stream().filter(note-> note.getId().compareTo(id) == 0).findFirst().orElse(null);
+    public Note getNote(String id) {
+        return noteRepository.findById(id).stream().findFirst().orElse(null);
     }
 
     @Override
-    public void saveNote(Note note) {
-        note.setId(UUID.randomUUID());
-        notes.add(note);
+    public void saveNote(String description) {
+        if(StringUtils.isBlank(description)){
+            throw new NoteValidationException("Description must not be empty");
+        }
+        Node document = Parser.builder().build().parse(description.trim());
+        String html = HtmlRenderer.builder().build().render(document);
+        noteRepository.save(new Note(null, html));
     }
 
     @Override
     public Note updateNote(Note note) {
-        List<Note> updated = notes.stream().filter(e -> (e.getId().compareTo(note.getId()) != 0)).collect(Collectors.toList());
-        updated.add(note);
-        return note;
+       noteRepository.save(note);
+       return noteRepository.findById(note.getId()).stream().findFirst().orElse(null);
     }
 }
