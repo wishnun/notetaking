@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notetaking
+  name: notetaking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notetaking
+  template:
+    metadata:
+      labels:
+        app: notetaking
+    spec:
+      containers:
+      - name: my-springboot-app
+        image: 508043323580.dkr.ecr.us-east-1.amazonaws.com/wishnun-docker-repo:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8085
+          name: http
+          protocol: TCP
+        env:
+          - name: MONGO_URL
+            value: mongodb://mongo:27017/dev
+# service type loadbalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: notetaking
+    k8s-app: notetaking
+  name: notetaking
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8085
+  type: LoadBalancer
+  selector:
+    app: notetaking
+
+
+
