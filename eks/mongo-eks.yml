@@ -3,12 +3,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: mongo-pvc
 spec:
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 75Mi
-  storageClassName: local-storage
+      storage: 256Mi
 ---
 apiVersion: v1
 kind: Service
